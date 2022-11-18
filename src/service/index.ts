@@ -1,10 +1,21 @@
 const get_users = async (props: SearchObject) => {
-    const { login, page, perPage } = props;
-    const result: any = await window.fetch(
-        `https://api.github.com/search/users?q=${login}%20in%3Alogin&per_page=${perPage}&page=${page}`
-    );
+    try {
+        const { login, page, perPage } = props;
+        const result: any = await window.fetch(
+            `https://api.github.com/search/users?q=${login}%20in%3Alogin&per_page=${perPage}&page=${page}`
+        );
 
-    return result.json();
+        switch (result.status) {
+            case 200:
+                return result.json();
+            case 403:
+                throw new Error("403");
+            default:
+                throw new Error("500");
+        }
+    } catch (err: any) {
+        throw new Error(err.message);
+    }
 };
 
 const Action = {

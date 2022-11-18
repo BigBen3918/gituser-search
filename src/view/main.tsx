@@ -19,6 +19,7 @@ import {
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import SearchIcon from "@mui/icons-material/Search";
+import { toast } from "react-toastify";
 import Action from "../service";
 
 const StyledTableCell = styled(TableCell)({
@@ -36,10 +37,23 @@ const columns: readonly Column[] = [
 
 function Main() {
     const [login, setLogin] = React.useState("");
+    const [total, setTotal] = React.useState(0);
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
     const [loading, setLoading] = React.useState(false);
     const [rows, setRows] = React.useState<Data[]>([]);
+
+    React.useEffect(() => {
+        if ((login ?? "") !== "") {
+            handleSearch();
+        }
+    }, [page, rowsPerPage]);
+
+    const handleKeyPress = async (event: any) => {
+        if (event.key === "Enter") {
+            handleSearch();
+        }
+    };
 
     const handleSearch = async () => {
         try {
@@ -50,12 +64,19 @@ function Main() {
                 page: page,
                 perPage: rowsPerPage,
             });
+            setTotal(result.total_count);
             setRows(result.items);
 
             setLoading(false);
         } catch (err: any) {
             setLoading(false);
-            console.log(err.message);
+            setTotal(0);
+
+            if (err.message === "403") {
+                toast.error("Access limit exceeded, Try again after 3 min");
+            } else {
+                toast.error("Network error");
+            }
         }
     };
 
@@ -66,7 +87,7 @@ function Main() {
     const handleChangeRowsPerPage = (
         event: React.ChangeEvent<HTMLInputElement>
     ) => {
-        setRowsPerPage(+event.target.value);
+        setRowsPerPage(Number(event.target.value));
         setPage(0);
     };
 
@@ -107,6 +128,7 @@ function Main() {
                         }}
                         value={login}
                         onChange={(e: any) => setLogin(e.target.value)}
+                        onKeyDown={handleKeyPress}
                     />
                     <Button
                         variant="contained"
@@ -134,8 +156,8 @@ function Main() {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {rows.length > 0 ? (
-                                rows.map((item: Data, index: number) => (
+                            {rows?.length > 0 ? (
+                                rows?.map((item: Data, index: number) => (
                                     <TableRow hover key={index}>
                                         <StyledTableCell>
                                             <img
@@ -175,7 +197,7 @@ function Main() {
                 <TablePagination
                     rowsPerPageOptions={[10, 25, 100]}
                     component="div"
-                    count={rows.length}
+                    count={total}
                     rowsPerPage={rowsPerPage}
                     page={page}
                     onPageChange={handleChangePage}
