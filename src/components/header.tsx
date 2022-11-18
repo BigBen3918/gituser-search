@@ -5,8 +5,9 @@ import SearchIcon from "@mui/icons-material/Search";
 function Header() {
     const HeaderBox = styled(Box)({
         padding: 0,
-        background: "#5300af",
+        background: "#780f9f",
         cursor: "context-menu",
+        userSelect: "none",
 
         "> div": {
             padding: "20px 30px",

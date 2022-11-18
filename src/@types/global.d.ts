@@ -4,7 +4,13 @@ interface Column {
 }
 
 interface Data {
-    avatar: string;
+    avatar_url: string;
     login: string;
     type: string;
+}
+
+interface SearchObject {
+    login: string;
+    perPage: number;
+    page: number;
 }
