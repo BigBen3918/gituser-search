@@ -1,46 +1,47 @@
-# Getting Started with Create React App
+# React-Github-User-Search
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+The goal is to create a simple web application which makes a request to an API, parses the response, and displays the result in the UI. The app will consist of **two major components** - one **search** component and one **results** component.
 
-## Available Scripts
+### Problem
 
-In the project directory, you can run:
+After the investigation, I found that GitHub user search API not allowing sort by `login` at the moment, so Server-Side-Sort is actually not implemented.
 
-### `yarn start`
+### Additions
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+- [Material UI](https://mui.com/) for the CSS library
+- [GitHub Pages](https://pages.github.com) for the deployment
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+### Search Component
 
-### `yarn test`
+This component should contain two elements:
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- 'Login' Text input for entering a String value
+- 'Submit' Button for initiating a request to
+  `https://api.github.com/search/users?q={login} in:login`, where {login} is the input value
 
-### `yarn build`
+```bash
+# Example curl GET request to search for for login `foo`
+curl --request GET '[https://api.github.com/search/users?q=foo in:login](https://api.github.com/search/users?q=foo%20in:login)'
+```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### Results Component
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+This component should contain a single element:
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+- Results Table for displaying the results of the User search
 
-### `yarn eject`
+The results table has the following requirements:
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+- Display three columns from the response:
+    - `avatar_url`
+    - `login`
+    - `type`
+- Use [Pagination](https://docs.github.com/en/rest/guides/traversing-with-pagination#basics-of-pagination), with **9** items displayed Per_Page
+- Allow Sorting, with the `login` column being sorted by default
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## Use-Case
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+- After the app is launched, the **Search** component is displayed
+- The user enters a random String value into to the 'Login' field and clicks the 'Submit' button
+- The app sends a http request to `https://api.github.com/search/users?q={login} in:login`, where {login} is the String value entered by the user
+- The app then parses the response from the server. If data is returned, the **Results** component should display the fetched values. If there is an issue with the request, then an error message should be displayed.
