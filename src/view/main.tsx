@@ -84,6 +84,10 @@ function Main() {
         setPage(newPage);
     };
 
+    const handleClick = (url: string) => {
+        window.open(url);
+    };
+
     const handleChangeRowsPerPage = (
         event: React.ChangeEvent<HTMLInputElement>
     ) => {
@@ -158,7 +162,16 @@ function Main() {
                         <TableBody>
                             {rows?.length > 0 ? (
                                 rows?.map((item: Data, index: number) => (
-                                    <TableRow hover key={index}>
+                                    <TableRow
+                                        hover
+                                        key={index}
+                                        onClick={() =>
+                                            handleClick(item.html_url)
+                                        }
+                                        sx={{
+                                            cursor: "pointer",
+                                        }}
+                                    >
                                         <StyledTableCell>
                                             <img
                                                 src={item.avatar_url}
