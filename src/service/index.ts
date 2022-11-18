@@ -2,7 +2,7 @@ const get_users = async (props: SearchObject) => {
     try {
         const { login, page, perPage } = props;
         const result: any = await window.fetch(
-            `https://api.github.com/search/users?q=${login}%20in%3Alogin&per_page=${perPage}&page=${page}`
+            `${process.env.REACT_APP_GITAPI}/search/users?q=${login}%20in%3Alogin&per_page=${perPage}&page=${page}`
         );
 
         switch (result.status) {
